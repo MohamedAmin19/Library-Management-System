@@ -16,6 +16,8 @@ const searchRateLimiter = rateLimit({
 module.exports = function (db) {
     const borrowerModel = new Borrower(db);
 
+    //INPUT => Params for limit and page number
+    //OUTPUT => List of borrowers using pagination
     router.get('/', searchRateLimiter, (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
@@ -29,6 +31,8 @@ module.exports = function (db) {
         });
     });
 
+    //INPUT => Request body with these details(name, email, registered_date)
+    //OUTPUT => "Borrower added successfully"
     router.post('/', [
         body('name').trim().notEmpty(),
         body('email').isEmail().normalizeEmail(),
@@ -48,6 +52,8 @@ module.exports = function (db) {
             });
         });
 
+    //INPUT => Request body with the updated details(name, email, registered_date)
+    //OUTPUT => "Borrower updated successfully"    
     router.put('/:id', [
         param('id').isInt(),
         body('name').optional().trim().notEmpty(),
@@ -67,6 +73,8 @@ module.exports = function (db) {
             });
         });
 
+    //INPUT => Id of the borrower as a url variable
+    //OUTPUT => "Borrower deleted successfully"
     router.delete('/:id', [
         param('id').isInt()
     ],

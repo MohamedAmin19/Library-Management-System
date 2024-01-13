@@ -14,6 +14,8 @@ const searchRateLimiter = rateLimit({
 module.exports = function (db) {
     const bookModel = new Book(db);
 
+    //INPUT => Params for limit and page number
+    //OUTPUT => List of books using pagination
     router.get('/', searchRateLimiter, (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
@@ -27,6 +29,8 @@ module.exports = function (db) {
         });
     });
 
+    //INPUT => Param of the query to search with (title, author or ISBN)
+    //OUTPUT => List of the books depends on the search query
     router.get('/search', (req, res) => {
         const { query } = req.query;
         if (!query) {
@@ -42,6 +46,8 @@ module.exports = function (db) {
         });
     });
 
+    //INPUT => Request body with these details(title, author, ISBN(Unique number), quantity, shelf_location)
+    //OUTPUT => "Book added successfully"
     router.post('/', [
         body('title').trim().notEmpty(),
         body('author').trim().notEmpty(),
@@ -63,6 +69,8 @@ module.exports = function (db) {
             });
         });
 
+    //INPUT => Request body with the updated details(title, author, ISBN(Unique number), quantity, shelf_location)
+    //OUTPUT => "Book updated successfully"
     router.put('/:id', [
         param('id').isInt(),
         body('title').trim().notEmpty(),
@@ -85,6 +93,8 @@ module.exports = function (db) {
             });
         });
 
+    //INPUT => Id of the book as a url variable
+    //OUTPUT => "Book deleted successfully"
     router.delete('/:id', [
         param('id').isInt()
     ],

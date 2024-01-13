@@ -7,7 +7,8 @@ const Borrowing = require('../models/borrowing');
 module.exports = (db) => {
     const borrowingModel = new Borrowing(db);
 
-    // Check Out a Book
+    //INPUT => Request body with these details(book_id, borrower_id, checkout_date, due_date)
+    //OUTPUT => "Book checked out successfully"
     router.post('/checkout', [
         body('book_id').isInt(),
         body('borrower_id').isInt(),
@@ -29,7 +30,8 @@ module.exports = (db) => {
             });
         });
 
-    // Return a Book
+    //INPUT => Request body with these details(borrowing_id, return_date)
+    //OUTPUT => "Book returned successfully"
     router.post('/return', [
         body('borrowing_id').isInt(),
         body('return_date').isISO8601()
@@ -49,7 +51,8 @@ module.exports = (db) => {
             });
         });
 
-    // Check Borrower’s Books
+    // BorrowerId of the book as a url variable
+    // List of books the borrower currently have 
     router.get('/borrower/:borrowerId', [
         param('borrowerId').isInt()
     ],
@@ -67,7 +70,7 @@ module.exports = (db) => {
             });
         });
 
-    // List Overdue Books
+    // OUTPUT => List Overdue Books
     router.get('/overdue', (req, res) => {
         borrowingModel.listOverdueBooks((err, results) => {
             if (err) {
@@ -78,7 +81,8 @@ module.exports = (db) => {
         });
     });
 
-    //analytical reports of the borrowing process
+    //INPUT => Params for startDate and endDate
+    //OUTPUT => CVS report for the borrowing process in a specific period depends on the startDate and endDate
     router.get('/report/csv', [
         query('startDate').isISO8601().withMessage('Invalid start date format'),
         query('endDate').isISO8601().withMessage('Invalid end date format')
@@ -109,8 +113,7 @@ module.exports = (db) => {
             });
         });
 
-
-    //exports all overdue borrows from the last month
+    //OUTPUT => CVS report for the overdue borrows from the last month    
     router.get('/export/overdue', (req, res) => {
         borrowingModel.getOverdueBorrowings((err, results) => {
             if (err) {
@@ -129,7 +132,7 @@ module.exports = (db) => {
         });
     });
 
-    //borrowing processes from the last month
+    //OUTPUT => CVS report for the borrowing processes from the last month    
     router.get('/export/lastmonth', (req, res) => {
         borrowingModel.getBorrowingsLastMonth((err, results) => {
             if (err) {
